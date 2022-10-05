@@ -1,0 +1,16 @@
+.title {
+  width: 100px;
+  height: 100px;
+  color: red;
+  background-color: pink;
+  text-align: center;
+}
+.list {
+  list-style: none;
+}
+.h1 {
+  color: pink;
+}
+.p {
+  background-color: skyblue;
+}
