@@ -474,6 +474,17 @@ ReactDOM.render(div, document.getElementById('root'))
 
 
 
+小结:
+
+1.使用{}，里面写表达式，进行动态渲染
+
+- 表达式和语句的区别，语句是if for while switch这些，还有const num = 1这样写是错的；但是如果是num = 1这样是赋值是ok的，意味着 {num = 1}是可以的，但{const num = 10}就是错的
+- 表达式 变量 函数调用 三元 逻辑运算这些都是可以的
+
+2.JSX本身放到{}里面也是可以的 {<div></div>}
+
+3.属性的写法 <div className={}></div> 属性直接写{} 不需要写 {}
+
 ## 6 JSX的列表渲染
 
 1 使用map方法，返回一个数组，注意JSX里面可以写数组，
@@ -483,18 +494,78 @@ ReactDOM.render(div, document.getElementById('root'))
 3 key如何设置？以后会从后台请求id 没有就用index或者item
 
 ```js
+// 1.引入
+import ReactDOM from 'react-dom'
+// 2.变量
+let songs = [1, 2, 3]
+// 3.JSX的使用
 const ul = (
   <ul>
-    {songs.map((item, index) => (
-      <li key={item}>{item}</li>
-    ))}
+    {/* JSX里面可以使用 map 返回的是一个数组 */}
+    {songs.map((item, index) => {
+      return <li>{item}</li>
+    })}
   </ul>
 )
+ReactDOM.render(ul, document.getElementById('root'))
+```
+
+
+
+为什么能够直接在ul里面写一个 {} 然后跟一个 {arr}？
+
+  原因是，下面的songs这样的数组能够被成功解析，展示一个列表
+
+```js
+/* 
+	JSX的列表渲染
+*/
+
+// 1.引入
+import ReactDOM from 'react-dom'
+// 2.变量
+let songs = [<li>航哥</li>, <li>俊哥</li>, <li>帅哥</li>]
+// 3.JSX的使用
+const ul = <ul>{songs}</ul>
+ReactDOM.render(ul, document.getElementById('root'))
 ```
 
 
 
 
+
+
+
+**小练习**
+
+```js
+/* 
+    JSX的列表渲染
+*/
+
+// 1.引入
+import ReactDOM from 'react-dom'
+// 2.变量
+// let songs = [<li>航哥</li>, <li>俊哥</li>, <li>帅哥</li>]
+let songs = [
+  { id: 1, name: 'xiaoli', age: 19, height: 190 },
+  { id: 2, name: 'xiaohang', age: 20, height: 180 },
+]
+// 3.JSX的使用
+// const ul = <ul>{songs}</ul>
+const ul = (
+  <ul>
+    {songs.map((item, index) => {
+      return (
+        <li key={item.id}>
+          姓名：{item.name} 年龄：{item.age} 身高: {item.height}
+        </li>
+      )
+    })}
+  </ul>
+)
+ReactDOM.render(ul, document.getElementById('root'))
+```
 
 
 
@@ -503,6 +574,7 @@ const ul = (
 直接加类名 使用className
 
 ```js
+import './base.css'
 const dv2 = <div className="title"></div>
 ```
 
@@ -511,6 +583,7 @@ const dv2 = <div className="title"></div>
 使用className + 判断语句
 
 ```js
+//这样写 能够使用除了red以外的 box类名 -> 模板字符串
 <h1 className={`${isRed ? 'red' : ''} box`}>通过style控制样式</h1>
 ```
 
@@ -518,11 +591,16 @@ const dv2 = <div className="title"></div>
 
 使用style
 
+- 注意**驼峰**的写法
+- 注意宽度和高度可以是**数字**，不写px
+- 注意，是双括号，一层括号表示**表达式**；一层括号表示对象
+
 ```js
-const dv = (
-  <div
-    style={{ width: '100px', height: '100px', backgroundColor: 'red' }}
-  ></div>
+let bgColor = 'pink'
+const div3 = (
+  <div style={{ width: 100, height: 200, backgroundColor: bgColor }}>
+    我是盒子3
+  </div>
 )
 ```
 
@@ -534,3 +612,110 @@ const dv = (
 
 
 
+
+
+**需求，**三个引入的类名，一个类名必须有，另外两个类名能够动态的控制
+
+- 也可以里面写一个 `` 模板字符串，然后拼接 ${}
+
+- 写一个函数来控制
+
+```diff
+import ReactDOM from 'react-dom'
+import './base.css'
+
++let isRed = true
++let isPink = true
+
++function classTraverse(obj) {
+  return Object.keys(obj)
+    .filter((key) => {
+      return obj[key]
+    })
+    .join(' ')
+}
+// 4.直接写引入的样式
+const div4 = (
+  <p
++    className={classTraverse({
+      pink: isPink,
+      red: isRed,
+      border: true,
+    })}
+  >
+    我是一个p标签
+  </p>
+)
+
+const div = <div>{div4}</div>
+ReactDOM.render(div, document.getElementById('root'))
+```
+
+![image-20221006133106587](https://typora-1309613071.cos.ap-shanghai.myqcloud.com/typora/image-20221006133106587.png)
+
+
+
+
+
+## 8 使用classnames库
+
+```js
+import classnames from 'classnames'
+const div4 = (
+  <p className={classnames('box', { red: isRed, pink: isPink })}>
+    我是一个p标签
+  </p>
+)
+```
+
+
+
+
+
+## 9. 小练习
+
+渲染成为如下的样式
+
+![image-20221006135725247](https://typora-1309613071.cos.ap-shanghai.myqcloud.com/typora/image-20221006135725247.png)
+
+```js
+import ReactDom from 'react-dom'
+import './base.css'
+const list = [
+  { id: 1, name: '刘德华', content: '给我一杯忘情水' },
+  { id: 2, name: '五月天', content: '不打扰，是我的温柔' },
+  { id: 3, name: '毛不易', content: '像我这样优秀的人' },
+]
+
+const ul = (
+  <ul>
+    {list.map((item) => {
+      return (
+        <li style={{ listStyle: 'none' }} key={item.id}>
+          样式可以直接写字符串
+          <h3 className={`h3`}>评论人：{item.name}</h3>
+          <p className={`p`}>评论内容：{item.content}</p>
+        </li>
+      )
+    })}
+  </ul>
+)
+
+ReactDom.render(ul, document.querySelector('#root'))
+```
+
+
+
+
+
+## JSX总结：
+
+- jsx本质就是用js写html/xml的代码，然后会被脚手架或者其他方法转化为浏览器能够理解的语言
+- jsx是声明式的语法，我们写js。babel库会去进行转化
+- jsx目前学会了
+  - 插值表达式
+  - 条件渲染
+  - 列表渲染
+  - 样式设置
+  - 样式库
+- Vue和React的区别是什么？React更加灵活，大部分都是用js代码来实现。而Vue是通过不断增加新的API，造轮子，来让你更方便。当触及到底层的设计时，Vue还是需要使用JSX
