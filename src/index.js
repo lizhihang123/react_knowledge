@@ -1,28 +1,12 @@
-import ReactDom from 'react-dom'
-import { Component } from 'react'
-import './style/base.css'
-import './style/index.css'
+// 01-Jack和Rose案例
+// Jack里面点击“说”这个按钮
+// Rose里面就会显示“you jump I look”
+import React, { Component } from 'react'
 
-import TodoHeader from './todoHeader'
-import TodoMain from './todoMain'
-import TodoFooter from './todoFooter'
-
-class App extends Component {
-  state = {
-    list: [
-      { id: 1, task: '吃饭', done: false },
-      { id: 2, task: '睡觉', done: true },
-      { id: 3, task: '跑步', done: false }
-    ]
-  }
+export default class index extends Component {
   render() {
     return (
-      <section className="todoapp">
-        <TodoHeader></TodoHeader>
-        <TodoMain list={this.state.list}></TodoMain>
-        <TodoFooter></TodoFooter>
-      </section>
+      <div>index</div>
     )
   }
 }
-ReactDom.render(<App></App>, document.getElementById('root'))
