@@ -1,131 +1,67 @@
-import ReactDom from 'react-dom'
-import { Component } from 'react'
-import './style/base.css'
-import './style/index.css'
-
-import TodoHeader from './todoHeader'
-import TodoMain from './todoMain'
-import TodoFooter from './todoFooter'
-
-class App extends Component {
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import Son from './Son'
+import Son2 from './Son2'
+import PureSon from './PureSon'
+export default class Index extends Component {
   state = {
-    list: [
-      { id: 1, task: '吃饭', done: false },
-      { id: 2, task: '睡觉', done: true },
-      { id: 3, task: '跑步', done: false }
-    ],
-    type: 'all'
+    count: 123,
+    money: 111,
+    car: '奔驰',
+    list: ['吃饭', '睡觉', '打豆豆'],
+    current: 0
   }
-  // 删除任务
-  deleteFn = (id) => {
-    console.log(id)
+  handleClick = () => {
     this.setState({
-      list: this.state.list.filter((item) => {
-        return item.id !== id
-      })
+      count: this.state.count + 1
     })
   }
-  // 改变任务状态
-  changeFn = (id) => {
+  changeMoney = () => {
     this.setState({
-      list: this.state.list.map((item) => {
-        // (难点) 如果是id不一致直接返回item 如果是一致的
-        // 就要修改对应的done属性 -> 怎么改？解构赋值原本的 + 新写对应的属性 + 会进行替换
-        // (易错点)
-        // 直接 if (item.id === id) {item.done === !item.donw} 这样是错误的写法 因为直接修改了原本的数据了
-        if (item.id === id) {
-          return {
-            ...item,
-            done: !item.done
-          }
-        } else {
-          return item
-        }
-      })
+      money: 200
     })
   }
-  // 添加任务状态
-  // (难点)
-  // 1.不能够修改原值 -> 状态不可变 直接 this.state.list.push(value)这就是错的
-  // 2.使用[]里面，解构原始的数组，然后传入一个新的对象，其值是task的值; task是value值，id用Date.now()
-  // 3.最好新添加的放到第一个去
-
-  addFn = (value) => {
+  changeCar = () => {
     this.setState({
-      list: [{ id: Date.now(), task: value, done: false }, ...this.state.list]
+      car: '宝马'
     })
   }
-
-  // 编辑修改
-  EditChangeFn = (id, task) => {
-    // 假如说修改某一个任务的数据，
-    // console.log(id, task)
+  // 修改爱好
+  // 小结：
+  // 1. setState方法，是异步更新，使用完立即去获取state的值，还是旧的值。| 不会立即更新，而是会进行整合(整合的意思就是，修改同一个值多次，只拿最后一次过来用 + 修改不同的值，会进行合并)
+  // 2. setState方法，可以跟一个参数，就是对象，然后改值
+  //   第一个参数可以是回调函数，然后回调函数的参数能够获取到上一次更新的最新的结果
+  //   第二个参数也是一个函数，里面能够获取到最新的值
+  // 3. 如果是跟渲染没有关系的函数，不要放在state里面。vue也是，react也是，就能够减少dom更新
+  //   介绍了父组件更新，子组件也更新的场景。以及shouldComponentUpdate()钩子函数，第一个参数获取到最新的nextProps就是最新的dom，函数里面的this.props是旧的dom。我们能够比较差异，返回true或者false来控制是否显示
+  changeHobby = () => {
     this.setState({
-      list: this.state.list.map((item) => {
-        if (item.id === id) {
-          return {
-            ...item,
-            task
-          }
-        } else {
-          return item
-        }
-      })
+      current: (Math.random() * this.state.list.length) | 0
     })
   }
-  // 清空任务
-  clearFn = () => {
-    this.setState({
-      list: this.state.list.filter((item) => !item.done)
-    })
-  }
-  // 点击切换任务状态高亮
-  changeType = (type) => {
-    this.setState({
-      type: type
-    })
-  }
-  // 全选和反选的修改
-  changeAllFn = (checked) => {
-    this.setState({
-      list: this.state.list.map((item) => {
-        return {
-          ...item,
-          done: checked
-        }
-      })
-    })
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState.current === this.state.current) {
+      return false
+    }
+    return true
   }
   render() {
+    console.log('app组件更新啦')
     return (
-      <section className="todoapp">
-        <TodoHeader addFn={this.addFn}></TodoHeader>
-        <TodoMain
-          list={this.state.list}
-          type={this.state.type}
-          deleteFn={this.deleteFn}
-          changeFn={this.changeFn}
-          EditChangeFn={this.EditChangeFn}
-          changeAllFn={this.changeAllFn}
-        ></TodoMain>
-        <TodoFooter
-          list={this.state.list}
-          clearFn={this.clearFn}
-          type={this.state.type}
-          changeType={this.changeType}
-        ></TodoFooter>
-      </section>
+      <div>
+        {this.state.count}
+        <button onClick={this.handleClick}>点击count++</button>
+        <Son money={this.state.money}></Son>
+        <Son2 car={this.state.car}></Son2>
+        <button onClick={this.changeMoney}>修改钱</button>
+        <button onClick={this.changeCar}>修改车</button>
+        <h1>兴趣爱好</h1>
+        <span>{this.state.list[this.state.current]}</span>
+        <button onClick={this.changeHobby}>点击修改爱好</button>
+        <PureSon></PureSon>
+      </div>
     )
   }
-  // dom挂载好 -> 数据存到本地存储，拿
-  componentDidMount() {
-    this.setState({
-      list: JSON.parse(localStorage.getItem('list')) || []
-    })
-  }
-  // dom更新好 -> 去修改本地存储的数据，存好
-  componentDidUpdate() {
-    localStorage.setItem('list', JSON.stringify(this.state.list))
-  }
 }
-ReactDom.render(<App></App>, document.getElementById('root'))
+let app = document.getElementById('root')
+ReactDOM.render(<Index></Index>, app)

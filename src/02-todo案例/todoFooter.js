@@ -1,60 +1,63 @@
 import React, { Component } from 'react'
 
+/* 
+08.显示底部的任务数量
+  父传子就好了
+  const length = this.props.list.filter((item) => !item.done).length
+09.清空所有完成的任务
+  子传父,父组件的this.state.list直接过滤就好了
+*/
 export default class todoFooter extends Component {
-  // 清空任务数
   clear = () => {
     this.props.clearFn()
   }
-  handleClick = (type) => {
+  // 子传父 修改高亮状态
+  changeType = (type) => {
     this.props.changeType(type)
   }
   render() {
-    // 是否显示 clear completed按钮
-    let isShow = this.props.list.some((item) => item.done)
-    // type变量 用于控制 下面的任务状态的切换
-    let { list, type } = this.props
-    // 如果一个任务也没有 就不显示底部内容
-    if (list.length === 0) {
-      return null
-    }
-    // 剩余的任务数
-    let leftCount = list.filter((item) => item.done === false).length
+    // 没有完成的任务数量
+    const unFinishLength = this.props.list.filter((item) => !item.done).length
+    // 完成的任务数量
+    const finishLength = this.props.list.filter((item) => item.done).length
+    // 底部type的切换
+    const { type } = this.props
     return (
       <footer className="footer">
         <span className="todo-count">
-          <strong>{leftCount}</strong> item left
+          <strong>{unFinishLength}</strong> item left
         </span>
         <ul className="filters">
           <li>
             <a
-              className={type === 'all' ? 'active' : ''}
               href="#/"
-              onClick={() => this.handleClick('all')}
+              className={type === 'all' ? 'active' : ''}
+              onClick={() => this.changeType('all')}
             >
               All
             </a>
           </li>
           <li>
             <a
-              className={type === 'active' ? 'active' : ''}
               href="#/active"
-              onClick={() => this.handleClick('active')}
+              className={type === 'active' ? 'active' : ''}
+              onClick={() => this.changeType('active')}
             >
               Active
             </a>
           </li>
           <li>
             <a
-              className={type === 'completed' ? 'active' : ''}
               href="#/completed"
-              onClick={() => this.handleClick('completed')}
+              className={type === 'completed' ? 'active' : ''}
+              onClick={() => this.changeType('completed')}
             >
               Completed
             </a>
           </li>
         </ul>
-        {/* 只有isShow是true的时候 才会显示按钮 */}
-        {isShow && (
+        {/* length是有几个任务是没有完成的 而 clear completed是有已经完成的任务 如果 length > 0 */}
+        {finishLength > 0 && (
           <button className="clear-completed" onClick={this.clear}>
             Clear completed
           </button>

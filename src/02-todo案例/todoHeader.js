@@ -1,21 +1,18 @@
 import React, { Component } from 'react'
 
 export default class todoHeader extends Component {
+  // 存在疑惑 类里面和render函数里面写法
+  // 类里面 写变量或者 函数
+  // render里面可以写各种表达式语句 声明变量要用let和const
   state = {
-    name: ''
+    text: ''
   }
-  addTask = (e) => {
-    // console.log(e.keyCode)
-    // if (e.keyCode === 13) {
-    //   this.props.addFn(e.target.value)
-    // }
-    if (e.keyCode !== 13) return
-    if (e.target.value.trim() === '') return
-    this.props.addFn(e.target.value)
-    this.setState({
-      name: ''
-    })
+  handleKeyUp = (e) => {
+    if (e.keyCode === 13) {
+      this.props.addFn(e.target.value)
+    }
   }
+  handleChange = () => {}
   render() {
     return (
       <header className="header">
@@ -25,9 +22,9 @@ export default class todoHeader extends Component {
           placeholder="What needs to be done?"
           autoFocus
           name="task"
-          value={this.state.name}
-          onChange={(e) => this.setState({ name: e.target.value })}
-          onKeyUp={(e) => this.addTask(e)}
+          value={this.state.text}
+          onKeyUp={this.handleKeyUp}
+          onChange={(e) => this.setState({ text: e.target.value })}
         />
       </header>
     )
