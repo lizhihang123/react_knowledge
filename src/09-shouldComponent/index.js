@@ -32,7 +32,7 @@ export default class Index extends Component {
   // 2. setState方法，可以跟一个参数，就是对象，然后改值
   //   第一个参数可以是回调函数，然后回调函数的参数能够获取到上一次更新的最新的结果
   //   第二个参数也是一个函数，里面能够获取到最新的值
-  // 3. 如果是跟渲染没有关系的函数，不要放在state里面。vue也是，react也是，就能够减少dom更新
+  // 3. 如果是跟渲染没有关系的变量，不要放在state里面。vue也是，react也是，就能够减少dom更新
   //   介绍了父组件更新，子组件也更新的场景。以及shouldComponentUpdate()钩子函数，第一个参数获取到最新的nextProps就是最新的dom，函数里面的this.props是旧的dom。我们能够比较差异，返回true或者false来控制是否显示
   changeHobby = () => {
     this.setState({
